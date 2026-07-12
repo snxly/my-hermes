@@ -26,7 +26,7 @@ async def handle(event_type: str, context: dict) -> None:
     else:
         profile = "default"
 
-    message = f"✨ {profile} 已上线，随时听候差遣～"
+    message = f"🌟 {profile} 已上线，随时听候差遣～"
 
     # Send to each platform's home channel using the gateway's own adapters
     for platform, adapter in gateway.adapters.items():
