@@ -1,20 +1,27 @@
 """Send a startup DM to the home channel when the gateway boots.
 
-Runs in a daemon thread to avoid blocking the gateway startup event loop.
+Runs in a daemon thread with a delay to let the gateway fully initialize
+before calling hermes send.
 """
 
 import logging
 import platform as platform_mod
 import subprocess
 import threading
+import time
 
 from hermes_cli.config import get_hermes_home
 
 logger = logging.getLogger("hooks.say-hello")
 
+# Give the gateway time to fully start before sending
+STARTUP_DELAY_SECONDS = 10
+
 
 def _send_message(profile: str, target_platform: str, message: str) -> None:
-    """Fire-and-forget: run hermes send in a subprocess."""
+    """Fire-and-forget: wait for gateway readiness, then send."""
+    time.sleep(STARTUP_DELAY_SECONDS)
+
     try:
         result = subprocess.run(
             ["hermes", "--profile", profile, "send", "--to", target_platform, message],
@@ -53,7 +60,8 @@ async def handle(event_type: str, context: dict) -> None:
 
     message = f"{hostname} / {profile} 已上线"
 
-    # Run in a daemon thread so the gateway event loop is not blocked
+    # Run in a daemon thread — handler returns instantly, send happens
+    # after the gateway has finished initialising.
     thread = threading.Thread(
         target=_send_message,
         args=(profile, target_platform, message),
