@@ -1,0 +1,4 @@
+name: say-hello
+description: Send a startup DM when the gateway boots
+events:
+  - gateway:startup
