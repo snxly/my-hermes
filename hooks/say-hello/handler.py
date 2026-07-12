@@ -5,7 +5,6 @@ WebSocket connection (avoids conflicts with WeCom's ws-based transport).
 """
 
 import logging
-import platform as platform_mod
 
 from hermes_cli.config import get_hermes_home
 
@@ -21,14 +20,13 @@ async def handle(event_type: str, context: dict) -> None:
         logger.warning("Gateway runner not available, skipping startup message")
         return
 
-    hostname = platform_mod.node()
     hermes_home = str(get_hermes_home())
     if "/profiles/" in hermes_home:
         profile = hermes_home.rsplit("/profiles/", 1)[-1]
     else:
         profile = "default"
 
-    message = f"{hostname} / {profile} 已上线"
+    message = f"✨ {profile} 已上线，随时听候差遣～"
 
     # Send to each platform's home channel using the gateway's own adapters
     for platform, adapter in gateway.adapters.items():
