@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes Agent Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020617;
+      min-height: 100vh;
+      padding: 2rem;
+      color: white;
+    }
+    .container { max-width: 1300px; margin: 0 auto; }
+    .header { margin-bottom: 2rem; }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .pulse-dot { width: 12px; height: 12px; background: #22d3ee; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+    .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
+    .diagram-container {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 1rem;
+      border: 1px solid #1e293b;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+    svg { width: 100%; min-width: 1100px; display: block; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
+    .card { background: rgba(15, 23, 42, 0.5); border-radius: 0.75rem; border: 1px solid #1e293b; padding: 1.25rem; }
+    .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .card-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .card-dot.cyan { background: #22d3ee; }
+    .card-dot.emerald { background: #34d399; }
+    .card-dot.violet { background: #a78bfa; }
+    .card-dot.amber { background: #fbbf24; }
+    .card-dot.rose { background: #fb7185; }
+    .card-dot.orange { background: #fb923c; }
+    .card h3 { font-size: 0.875rem; font-weight: 600; }
+    .card ul { list-style: none; color: #94a3b8; font-size: 0.75rem; }
+    .card li { margin-bottom: 0.375rem; }
+    .footer { text-align: center; margin-top: 1.5rem; color: #475569; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>Hermes Agent Architecture</h1>
+      </div>
+      <p class="subtitle">Multi-surface AI Agent Framework · Provider-Agnostic · Self-Improving via Skills · Nous Research</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1200 920">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+          </marker>
+          <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee" />
+          </marker>
+          <marker id="arrow-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#34d399" />
+          </marker>
+          <marker id="arrow-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa" />
+          </marker>
+          <marker id="arrow-rose" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fb7185" />
+          </marker>
+          <marker id="arrow-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24" />
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- TITLE -->
+        <text x="600" y="30" fill="white" font-size="14" font-weight="700" text-anchor="middle">Hermes Agent — System Architecture</text>
+
+        <!-- =====================================================
+             LAYER 1: SURFACES
+             ===================================================== -->
+        <rect x="20" y="48" width="1160" height="110" rx="10" fill="rgba(8, 51, 68, 0.08)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="32" y="66" fill="#22d3ee" font-size="9" font-weight="600">Surfaces (User Entry Points)</text>
+
+        <rect x="40" y="78" width="130" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="105" y="101" fill="white" font-size="10" font-weight="600" text-anchor="middle">💻 CLI</text>
+        <text x="105" y="117" fill="#94a3b8" font-size="8" text-anchor="middle">hermes chat -q</text>
+        <text x="105" y="130" fill="#94a3b8" font-size="7" text-anchor="middle">Interactive + One-shot</text>
+
+        <rect x="190" y="78" width="130" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="255" y="101" fill="white" font-size="10" font-weight="600" text-anchor="middle">🖥 TUI</text>
+        <text x="255" y="117" fill="#94a3b8" font-size="8" text-anchor="middle">Ink + prompt_toolkit</text>
+        <text x="255" y="130" fill="#94a3b8" font-size="7" text-anchor="middle">Skins / Statusbar</text>
+
+        <rect x="340" y="78" width="130" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="405" y="101" fill="white" font-size="10" font-weight="600" text-anchor="middle">🖥 Desktop</text>
+        <text x="405" y="117" fill="#94a3b8" font-size="8" text-anchor="middle">Electron Native App</text>
+        <text x="405" y="130" fill="#94a3b8" font-size="7" text-anchor="middle">Win/Mac/Linux</text>
+
+        <rect x="490" y="78" width="130" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="555" y="101" fill="white" font-size="10" font-weight="600" text-anchor="middle">🌐 Dashboard</text>
+        <text x="555" y="117" fill="#94a3b8" font-size="8" text-anchor="middle">Web Admin Panel</text>
+        <text x="555" y="130" fill="#94a3b8" font-size="7" text-anchor="middle">+ Embedded Chat</text>
+
+        <rect x="640" y="78" width="200" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="740" y="101" fill="white" font-size="10" font-weight="600" text-anchor="middle">📱 Gateway (20+ Platforms)</text>
+        <text x="740" y="117" fill="#94a3b8" font-size="8" text-anchor="middle">Telegram · Discord · Slack · WeChat</text>
+        <text x="740" y="130" fill="#94a3b8" font-size="7" text-anchor="middle">WhatsApp · iMessage · Signal · Email</text>
+
+        <rect x="860" y="78" width="150" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="935" y="101" fill="white" font-size="10" font-weight="600" text-anchor="middle">🔌 ACP + Proxy</text>
+        <text x="935" y="117" fill="#94a3b8" font-size="8" text-anchor="middle">IDE (VS Code/Zed)</text>
+        <text x="935" y="130" fill="#94a3b8" font-size="7" text-anchor="middle">OpenAI-compat API</text>
+
+        <!-- =====================================================
+             LAYER 2: CORE AGENT LOOP
+             ===================================================== -->
+        <rect x="20" y="180" width="740" height="210" rx="10" fill="rgba(6, 78, 59, 0.06)" stroke="#34d399" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="32" y="198" fill="#34d399" font-size="9" font-weight="600">Core Agent Loop</text>
+
+        <rect x="40" y="210" width="200" height="80" rx="8" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="2"/>
+        <text x="140" y="238" fill="white" font-size="11" font-weight="600" text-anchor="middle">run_agent.py</text>
+        <text x="140" y="254" fill="#94a3b8" font-size="8" text-anchor="middle">AIAgent · Conversation Loop</text>
+        <text x="140" y="268" fill="#94a3b8" font-size="7" text-anchor="middle">Build Prompt → LLM Call →</text>
+        <text x="140" y="280" fill="#94a3b8" font-size="7" text-anchor="middle">Tool Dispatch → Append → Loop</text>
+
+        <rect x="270" y="210" width="200" height="80" rx="8" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="370" y="238" fill="white" font-size="11" font-weight="600" text-anchor="middle">model_tools.py</text>
+        <text x="370" y="254" fill="#94a3b8" font-size="8" text-anchor="middle">Tool Discovery + Dispatch</text>
+        <text x="370" y="268" fill="#94a3b8" font-size="7" text-anchor="middle">get_tool_definitions()</text>
+        <text x="370" y="280" fill="#94a3b8" font-size="7" text-anchor="middle">handle_function_call()</text>
+
+        <rect x="500" y="210" width="130" height="80" rx="8" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="565" y="238" fill="white" font-size="11" font-weight="600" text-anchor="middle">toolsets.py</text>
+        <text x="565" y="254" fill="#94a3b8" font-size="8" text-anchor="middle">Toolset Registry</text>
+        <text x="565" y="268" fill="#94a3b8" font-size="7" text-anchor="middle">Compose / Resolve</text>
+        <text x="565" y="280" fill="#94a3b8" font-size="7" text-anchor="middle">_CORE_TOOLS</text>
+
+        <rect x="40" y="305" width="200" height="68" rx="8" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="140" y="330" fill="white" font-size="10" font-weight="600" text-anchor="middle">cli.py</text>
+        <text x="140" y="345" fill="#94a3b8" font-size="8" text-anchor="middle">HermesCLI · Interactive Shell</text>
+        <text x="140" y="358" fill="#94a3b8" font-size="7" text-anchor="middle">Slash Commands / /help /model</text>
+
+        <rect x="270" y="305" width="200" height="68" rx="8" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="370" y="330" fill="white" font-size="10" font-weight="600" text-anchor="middle">hermes_state.py</text>
+        <text x="370" y="345" fill="#94a3b8" font-size="8" text-anchor="middle">SQLite Session Store</text>
+        <text x="370" y="358" fill="#94a3b8" font-size="7" text-anchor="middle">FTS5 Full-Text Search</text>
+
+        <!-- Arrows inside core -->
+        <line x1="240" y1="250" x2="268" y2="250" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
+        <line x1="470" y1="250" x2="498" y2="250" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
+        <line x1="140" y1="290" x2="140" y2="303" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
+        <line x1="370" y1="290" x2="370" y2="303" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
+
+        <!-- =====================================================
+             LAYER 2b: AGENT SUBSYSTEMS
+             ===================================================== -->
+        <rect x="780" y="180" width="400" height="330" rx="10" fill="rgba(251, 146, 60, 0.04)" stroke="#fb923c" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="792" y="198" fill="#fb923c" font-size="9" font-weight="600">Agent Subsystems (agent/)</text>
+
+        <rect x="800" y="210" width="175" height="55" rx="6" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="887" y="232" fill="white" font-size="10" font-weight="600" text-anchor="middle">prompt_builder</text>
+        <text x="887" y="247" fill="#94a3b8" font-size="8" text-anchor="middle">System Prompt · SOUL.md</text>
+        <text x="887" y="258" fill="#94a3b8" font-size="7" text-anchor="middle">AGENTS.md injection</text>
+
+        <rect x="995" y="210" width="170" height="55" rx="6" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="1080" y="232" fill="white" font-size="10" font-weight="600" text-anchor="middle">memory_manager</text>
+        <text x="1080" y="247" fill="#94a3b8" font-size="8" text-anchor="middle">Persistent Cross-Session</text>
+        <text x="1080" y="258" fill="#94a3b8" font-size="7" text-anchor="middle">Honcho · Mem0 · Built-in</text>
+
+        <rect x="800" y="278" width="175" height="55" rx="6" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="887" y="300" fill="white" font-size="10" font-weight="600" text-anchor="middle">context_compressor</text>
+        <text x="887" y="315" fill="#94a3b8" font-size="8" text-anchor="middle">Auto-Summarization</text>
+        <text x="887" y="326" fill="#94a3b8" font-size="7" text-anchor="middle">Token Budget Mgmt</text>
+
+        <rect x="995" y="278" width="170" height="55" rx="6" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="1080" y="300" fill="white" font-size="10" font-weight="600" text-anchor="middle">credential_pool</text>
+        <text x="1080" y="315" fill="#94a3b8" font-size="8" text-anchor="middle">API Key Rotation</text>
+        <text x="1080" y="326" fill="#94a3b8" font-size="7" text-anchor="middle">OAuth + Multi-Key Pool</text>
+
+        <rect x="800" y="346" width="175" height="55" rx="6" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="887" y="368" fill="white" font-size="10" font-weight="600" text-anchor="middle">skill_bundles</text>
+        <text x="887" y="383" fill="#94a3b8" font-size="8" text-anchor="middle">Skill Discovery · Load</text>
+        <text x="887" y="394" fill="#94a3b8" font-size="7" text-anchor="middle">Preprocessing Pipeline</text>
+
+        <rect x="995" y="346" width="170" height="55" rx="6" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="1080" y="368" fill="white" font-size="10" font-weight="600" text-anchor="middle">model_metadata</text>
+        <text x="1080" y="383" fill="#94a3b8" font-size="8" text-anchor="middle">20+ Providers · Routing</text>
+        <text x="1080" y="394" fill="#94a3b8" font-size="7" text-anchor="middle">Context-Length Aware</text>
+
+        <rect x="800" y="414" width="175" height="40" rx="6" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="887" y="432" fill="white" font-size="9" font-weight="600" text-anchor="middle">Browser · Web · Image Gen</text>
+        <text x="887" y="446" fill="#94a3b8" font-size="7" text-anchor="middle">Provider/Registry Pattern</text>
+
+        <rect x="995" y="414" width="170" height="40" rx="6" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="1080" y="432" fill="white" font-size="9" font-weight="600" text-anchor="middle">redact · file_safety</text>
+        <text x="1080" y="446" fill="#94a3b8" font-size="7" text-anchor="middle">Secret + Prompt Injection</text>
+
+        <rect x="800" y="465" width="365" height="30" rx="6" fill="rgba(251, 146, 60, 0.2)" stroke="#fb923c" stroke-width="1"/>
+        <text x="982" y="484" fill="#94a3b8" font-size="8" text-anchor="middle">learning_graph · curator · insights · title_generator · i18n · onboarding</text>
+
+        <!-- =====================================================
+             LAYER 3: TOOLS
+             ===================================================== -->
+        <rect x="20" y="415" width="1160" height="95" rx="10" fill="rgba(120, 53, 15, 0.06)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="32" y="433" fill="#fbbf24" font-size="9" font-weight="600">Tools (tools/) — Registry Pattern: One File Per Tool</text>
+
+        <rect x="40" y="445" width="145" height="48" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="112" y="466" fill="white" font-size="10" font-weight="600" text-anchor="middle">🖥 Terminal + Process</text>
+        <text x="112" y="482" fill="#94a3b8" font-size="7" text-anchor="middle">Shell · Background · PTY</text>
+
+        <rect x="200" y="445" width="145" height="48" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="272" y="466" fill="white" font-size="10" font-weight="600" text-anchor="middle">📁 File I/O</text>
+        <text x="272" y="482" fill="#94a3b8" font-size="7" text-anchor="middle">read · write · patch · search</text>
+
+        <rect x="360" y="445" width="145" height="48" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="432" y="466" fill="white" font-size="10" font-weight="600" text-anchor="middle">🌐 Web + Browser</text>
+        <text x="432" y="482" fill="#94a3b8" font-size="7" text-anchor="middle">Search · CDP · Snapshot</text>
+
+        <rect x="520" y="445" width="145" height="48" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="592" y="466" fill="white" font-size="10" font-weight="600" text-anchor="middle">🧠 Skills + Memory</text>
+        <text x="592" y="482" fill="#94a3b8" font-size="7" text-anchor="middle">skill_view · memory · todo</text>
+
+        <rect x="680" y="445" width="145" height="48" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="752" y="466" fill="white" font-size="10" font-weight="600" text-anchor="middle">🖼 Vision + Image</text>
+        <text x="752" y="482" fill="#94a3b8" font-size="7" text-anchor="middle">vision_analyze · image_gen</text>
+
+        <rect x="840" y="445" width="145" height="48" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="912" y="466" fill="white" font-size="10" font-weight="600" text-anchor="middle">🤖 Delegation</text>
+        <text x="912" y="482" fill="#94a3b8" font-size="7" text-anchor="middle">delegate_task · clarify</text>
+
+        <rect x="1000" y="445" width="145" height="48" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="1072" y="466" fill="white" font-size="10" font-weight="600" text-anchor="middle">🔊 TTS · Cron · More</text>
+        <text x="1072" y="482" fill="#94a3b8" font-size="7" text-anchor="middle">text_to_speech · cronjob</text>
+
+        <!-- =====================================================
+             LAYER 4: DURABLE SYSTEMS
+             ===================================================== -->
+        <rect x="20" y="535" width="580" height="140" rx="10" fill="rgba(76, 29, 149, 0.06)" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="32" y="553" fill="#a78bfa" font-size="9" font-weight="600">Durable Background Systems</text>
+
+        <rect x="40" y="568" width="170" height="90" rx="8" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="125" y="592" fill="white" font-size="10" font-weight="600" text-anchor="middle">⏰ Cron Scheduler</text>
+        <text x="125" y="608" fill="#94a3b8" font-size="7" text-anchor="middle">cron/scheduler.py</text>
+        <text x="125" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">cron/jobs.py</text>
+        <text x="125" y="636" fill="#94a3b8" font-size="7" text-anchor="middle">Script · Skill · LLM jobs</text>
+        <text x="125" y="650" fill="#a78bfa" font-size="7" text-anchor="middle">3-min Hard Interrupt</text>
+
+        <rect x="230" y="568" width="170" height="90" rx="8" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="315" y="592" fill="white" font-size="10" font-weight="600" text-anchor="middle">🔧 Curator</text>
+        <text x="315" y="608" fill="#94a3b8" font-size="7" text-anchor="middle">agent/curator.py</text>
+        <text x="315" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">Skill Lifecycle Mgmt</text>
+        <text x="315" y="636" fill="#94a3b8" font-size="7" text-anchor="middle">Stale → Archive (never delete)</text>
+        <text x="315" y="650" fill="#a78bfa" font-size="7" text-anchor="middle">Usage Telemetry</text>
+
+        <rect x="420" y="568" width="165" height="90" rx="8" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="502" y="592" fill="white" font-size="10" font-weight="600" text-anchor="middle">📋 Kanban</text>
+        <text x="502" y="608" fill="#94a3b8" font-size="7" text-anchor="middle">SQLite Work Queue</text>
+        <text x="502" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">Multi-Profile Collab</text>
+        <text x="502" y="636" fill="#94a3b8" font-size="7" text-anchor="middle">Dispatcher in Gateway</text>
+        <text x="502" y="650" fill="#a78bfa" font-size="7" text-anchor="middle">Auto-Claim + Spawn</text>
+
+        <!-- =====================================================
+             LAYER 5: PERSISTENCE
+             ===================================================== -->
+        <rect x="620" y="535" width="560" height="140" rx="10" fill="rgba(136, 19, 55, 0.05)" stroke="#fb7185" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="632" y="553" fill="#fb7185" font-size="9" font-weight="600">Persistence Layer (~/.hermes/)</text>
+
+        <rect x="640" y="568" width="125" height="90" rx="6" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="702" y="592" fill="white" font-size="9" font-weight="600" text-anchor="middle">config.yaml</text>
+        <text x="702" y="608" fill="#94a3b8" font-size="7" text-anchor="middle">Settings</text>
+        <text x="702" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">Model · Agent</text>
+        <text x="702" y="636" fill="#94a3b8" font-size="7" text-anchor="middle">Delegation · Cron</text>
+        <text x="702" y="650" fill="#fb7185" font-size="7" text-anchor="middle">User-editable</text>
+
+        <rect x="780" y="568" width="125" height="90" rx="6" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="842" y="592" fill="white" font-size="9" font-weight="600" text-anchor="middle">.env</text>
+        <text x="842" y="608" fill="#94a3b8" font-size="7" text-anchor="middle">Secrets Only</text>
+        <text x="842" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">API Keys</text>
+        <text x="842" y="636" fill="#94a3b8" font-size="7" text-anchor="middle">Tokens</text>
+        <text x="842" y="650" fill="#fb7185" font-size="7" text-anchor="middle">Passwords</text>
+
+        <rect x="920" y="568" width="125" height="90" rx="6" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="982" y="592" fill="white" font-size="9" font-weight="600" text-anchor="middle">state.db</text>
+        <text x="982" y="608" fill="#94a3b8" font-size="7" text-anchor="middle">SQLite + FTS5</text>
+        <text x="982" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">Session Store</text>
+        <text x="982" y="636" fill="#94a3b8" font-size="7" text-anchor="middle">Conversations</text>
+        <text x="982" y="650" fill="#fb7185" font-size="7" text-anchor="middle">session_search</text>
+
+        <rect x="1060" y="568" width="105" height="90" rx="6" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="1112" y="592" fill="white" font-size="8" font-weight="600" text-anchor="middle">skills/</text>
+        <text x="1112" y="608" fill="#94a3b8" font-size="7" text-anchor="middle">memories/</text>
+        <text x="1112" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">auth.json</text>
+        <text x="1112" y="636" fill="#94a3b8" font-size="7" text-anchor="middle">profiles/</text>
+        <text x="1112" y="650" fill="#94a3b8" font-size="7" text-anchor="middle">logs/</text>
+
+        <!-- =====================================================
+             FLOW ARROWS
+             ===================================================== -->
+        <line x1="105" y1="138" x2="105" y2="208" stroke="#22d3ee" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-cyan)"/>
+        <line x1="740" y1="138" x2="740" y2="208" stroke="#22d3ee" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-cyan)"/>
+
+        <line x1="740" y1="285" x2="798" y2="285" stroke="#fb923c" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-amber)"/>
+
+        <line x1="370" y1="373" x2="370" y2="443" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-amber)"/>
+        <line x1="565" y1="290" x2="565" y2="443" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-amber)"/>
+
+        <line x1="300" y1="493" x2="300" y2="566" stroke="#a78bfa" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-violet)"/>
+
+        <line x1="870" y1="493" x2="870" y2="566" stroke="#fb7185" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-rose)"/>
+
+        <line x1="660" y1="138" x2="502" y2="566" stroke="#a78bfa" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <text x="580" y="330" fill="#a78bfa" font-size="7" transform="rotate(-70, 580, 330)">Kanban Dispatcher runs in Gateway</text>
+
+        <!-- =====================================================
+             LEGEND
+             ===================================================== -->
+        <rect x="20" y="700" width="550" height="195" rx="8" fill="rgba(15, 23, 42, 0.6)" stroke="#1e293b" stroke-width="1"/>
+        <text x="32" y="718" fill="white" font-size="10" font-weight="600">Legend</text>
+
+        <rect x="32" y="730" width="16" height="10" rx="2" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="54" y="739" fill="#94a3b8" font-size="8">Surfaces / Frontend</text>
+
+        <rect x="200" y="730" width="16" height="10" rx="2" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="222" y="739" fill="#94a3b8" font-size="8">Core Agent Loop</text>
+
+        <rect x="360" y="730" width="16" height="10" rx="2" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1"/>
+        <text x="382" y="739" fill="#94a3b8" font-size="8">Agent Subsystems</text>
+
+        <rect x="32" y="748" width="16" height="10" rx="2" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="54" y="757" fill="#94a3b8" font-size="8">Tools Layer</text>
+
+        <rect x="200" y="748" width="16" height="10" rx="2" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="222" y="757" fill="#94a3b8" font-size="8">Durable Systems</text>
+
+        <rect x="360" y="748" width="16" height="10" rx="2" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1"/>
+        <text x="382" y="757" fill="#94a3b8" font-size="8">Persistence Layer</text>
+
+        <line x1="32" y1="774" x2="48" y2="774" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+        <text x="54" y="777" fill="#94a3b8" font-size="8">Solid Arrow — Direct Call / Data Flow</text>
+
+        <line x1="32" y1="792" x2="48" y2="792" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="54" y="795" fill="#94a3b8" font-size="8">Dashed — Logical Dependency / Import</text>
+
+        <!-- KEY DESIGN PRINCIPLES -->
+        <rect x="590" y="700" width="590" height="195" rx="8" fill="rgba(15, 23, 42, 0.6)" stroke="#1e293b" stroke-width="1"/>
+        <text x="602" y="718" fill="#fbbf24" font-size="10" font-weight="600">🔑 Key Design Principles</text>
+        <text x="602" y="740" fill="#94a3b8" font-size="8">1. Prompt Caching Sacred — never mutate context/tools/system-prompt mid-conversation</text>
+        <text x="602" y="756" fill="#94a3b8" font-size="8">2. Narrow Waist at Core — new model tools are expensive; prefer skills, plugins, CLI+skill</text>
+        <text x="602" y="772" fill="#94a3b8" font-size="8">3. Self-Improving via Skills — agent learns from experience, saves procedures as reusable SKILL.md</text>
+        <text x="602" y="788" fill="#94a3b8" font-size="8">4. Message Role Alternation — never two assistant or two user messages in a row</text>
+        <text x="602" y="804" fill="#94a3b8" font-size="8">5. Config in YAML / Secrets in .env — behavioral settings NEVER go in .env</text>
+        <text x="602" y="820" fill="#94a3b8" font-size="8">6. Provider-Agnostic — 20+ LLM backends, credential pooling, context-aware routing</text>
+        <text x="602" y="836" fill="#94a3b8" font-size="8">7. Profiles — full isolation: config, sessions, skills, memory per profile</text>
+        <text x="602" y="852" fill="#94a3b8" font-size="8">8. Extensible at Edges — plugins, MCP servers, custom tools, webhooks, cron, 20+ platforms</text>
+      </svg>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="cards">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot emerald"></div>
+          <h3>Core Agent Loop (run_agent.py)</h3>
+        </div>
+        <ul>
+          <li>• AIAgent class — single entry point for all surfaces</li>
+          <li>• Build system prompt → Call LLM → Handle tool_calls → Loop</li>
+          <li>• Auto context compression near token limit</li>
+          <li>• 6,000+ lines, handles error recovery, streaming, multi-model</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot cyan"></div>
+          <h3>Gateway — 20+ Messaging Platforms</h3>
+        </div>
+        <ul>
+          <li>• Telegram, Discord, Slack, WeChat, WhatsApp, iMessage, Signal</li>
+          <li>• Built-in Kanban Dispatcher for multi-agent workflows</li>
+          <li>• Pairing system for DM authorization</li>
+          <li>• Rich sent store, sticker cache, runtime footers</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot amber"></div>
+          <h3>Tool System — Registry Pattern</h3>
+        </div>
+        <ul>
+          <li>• One file per tool under tools/ — auto-discovered via registry.register()</li>
+          <li>• Toolsets compose individual tools for different scenarios</li>
+          <li>• check_fn gates tools behind env vars / platform requirements</li>
+          <li>• Narrow waist: every tool shipped on every API call → add sparingly</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot violet"></div>
+          <h3>Skills — Self-Improving Agent</h3>
+        </div>
+        <ul>
+          <li>• Reusable procedures saved as SKILL.md with YAML frontmatter</li>
+          <li>• Curator: auto-manages lifecycle (stale → archive, never delete)</li>
+          <li>• Skills hub + GitHub tap for community sharing</li>
+          <li>• Preprocessing pipeline: inject into system prompt at session start</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot rose"></div>
+          <h3>Security & Privacy</h3>
+        </div>
+        <ul>
+          <li>• Secret redaction in tool output (on by default)</li>
+          <li>• Prompt injection scanning on all context files</li>
+          <li>• PII redaction in gateway messages (opt-in)</li>
+          <li>• Command approval: manual / smart (aux-LLM) / off</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot orange"></div>
+          <h3>Profiles & Multi-Tenancy</h3>
+        </div>
+        <ul>
+          <li>• ~/.hermes/profiles/&lt;name&gt;/ — full isolation per profile</li>
+          <li>• Clone from default or any profile</li>
+          <li>• Kanban multi-profile collaboration with dispatch</li>
+          <li>• Cron, curate, skills, memories all profile-scoped</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer">
+      Hermes Agent · Nous Research · github.com/NousResearch/hermes-agent · Provider-Agnostic · Self-Improving
+    </p>
+  </div>
+</body>
+</html>
