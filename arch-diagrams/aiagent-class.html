@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIAgent Class Diagram</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020617;
+      min-height: 100vh;
+      padding: 2rem;
+      color: white;
+    }
+    .container { max-width: 1300px; margin: 0 auto; }
+    .header { margin-bottom: 2rem; }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .pulse-dot { width: 12px; height: 12px; background: #22d3ee; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
+    .diagram-container {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 1rem;
+      border: 1px solid #1e293b;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+    svg { width: 100%; min-width: 1100px; display: block; }
+    .footer { text-align: center; margin-top: 1.5rem; color: #475569; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>AIAgent — Class Diagram</h1>
+      </div>
+      <p class="subtitle">run_agent.py · 6,055 lines · Core conversation engine</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1200 900">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+          </marker>
+          <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee" />
+          </marker>
+          <marker id="arrow-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#34d399" />
+          </marker>
+          <marker id="arrow-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa" />
+          </marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+        <text x="600" y="30" fill="white" font-size="14" font-weight="700" text-anchor="middle">AIAgent — 类结构</text>
+
+        <!-- ===== AIAgent 主类 ===== -->
+        <rect x="60" y="55" width="450" height="780" rx="10" fill="rgba(6, 78, 59, 0.08)" stroke="#34d399" stroke-width="2"/>
+        <text x="285" y="80" fill="#34d399" font-size="12" font-weight="700" text-anchor="middle">AIAgent (run_agent.py:393)</text>
+        <line x1="80" y1="90" x2="490" y2="90" stroke="#34d399" stroke-width="1"/>
+
+        <!-- 属性 -->
+        <rect x="80" y="100" width="410" height="260" rx="6" fill="rgba(6, 78, 59, 0.25)" stroke="#34d399" stroke-width="1"/>
+        <text x="100" y="120" fill="#fbbf24" font-size="9" font-weight="600">— 核心属性 —</text>
+        <text x="100" y="140" fill="#94a3b8" font-size="8">model / provider / base_url / api_key</text>
+        <text x="100" y="155" fill="#94a3b8" font-size="8">session_id / platform / user_id / chat_id</text>
+        <text x="100" y="170" fill="#94a3b8" font-size="8">max_iterations (默认 90)</text>
+        <text x="100" y="190" fill="#94a3b8" font-size="8">tools / valid_tool_names</text>
+        <text x="100" y="205" fill="#94a3b8" font-size="8">enabled_toolsets / disabled_toolsets</text>
+        <text x="100" y="225" fill="#94a3b8" font-size="8">_memory_store / _memory_manager</text>
+        <text x="100" y="240" fill="#94a3b8" font-size="8">_memory_enabled / _user_profile_enabled</text>
+        <text x="100" y="260" fill="#94a3b8" font-size="8">context_compressor</text>
+        <text x="100" y="275" fill="#94a3b8" font-size="8">_cached_system_prompt</text>
+        <text x="100" y="295" fill="#94a3b8" font-size="8">_tool_use_enforcement</text>
+        <text x="100" y="310" fill="#94a3b8" font-size="8">_base_url_lower / _base_url_hostname</text>
+        <text x="100" y="330" fill="#94a3b8" font-size="8">credential_pool</text>
+        <text x="100" y="345" fill="#94a3b8" font-size="8">iteration_budget</text>
+
+        <!-- 公共方法 -->
+        <rect x="80" y="375" width="410" height="170" rx="6" fill="rgba(6, 78, 59, 0.25)" stroke="#34d399" stroke-width="1"/>
+        <text x="100" y="395" fill="#22d3ee" font-size="9" font-weight="600">— 公共方法 —</text>
+        <text x="100" y="415" fill="white" font-size="9" font-weight="600">run_conversation()</text>
+        <text x="115" y="430" fill="#94a3b8" font-size="8">→ 代理到 agent/conversation_loop.py</text>
+        <text x="100" y="450" fill="white" font-size="9" font-weight="600">chat(message)</text>
+        <text x="115" y="465" fill="#94a3b8" font-size="8">→ 简单接口，返回 final_response</text>
+        <text x="100" y="485" fill="white" font-size="9" font-weight="600">switch_model()</text>
+        <text x="100" y="505" fill="white" font-size="9" font-weight="600">reset_session_state()</text>
+
+        <!-- 内部方法 -->
+        <rect x="80" y="560" width="410" height="260" rx="6" fill="rgba(251, 146, 60, 0.15)" stroke="#fb923c" stroke-width="1"/>
+        <text x="100" y="580" fill="#fb923c" font-size="9" font-weight="600">— 核心内部方法 —</text>
+        <text x="100" y="600" fill="white" font-size="9" font-weight="600">_build_system_prompt()</text>
+        <text x="115" y="615" fill="#94a3b8" font-size="8">→ 代理到 agent/system_prompt.py</text>
+        <text x="100" y="635" fill="white" font-size="9" font-weight="600">_execute_tool_calls()</text>
+        <text x="100" y="655" fill="white" font-size="9" font-weight="600">_execute_tool_calls_concurrent()</text>
+        <text x="100" y="675" fill="white" font-size="9" font-weight="600">_execute_tool_calls_sequential()</text>
+        <text x="100" y="695" fill="white" font-size="9" font-weight="600">_invoke_tool()</text>
+        <text x="100" y="715" fill="white" font-size="9" font-weight="600">_compress_context()</text>
+        <text x="100" y="735" fill="white" font-size="9" font-weight="600">_interruptible_streaming_api_call()</text>
+        <text x="100" y="755" fill="white" font-size="9" font-weight="600">_handle_max_iterations()</text>
+        <text x="100" y="775" fill="white" font-size="9" font-weight="600">_try_activate_fallback()</text>
+        <text x="100" y="795" fill="white" font-size="9" font-weight="600">_build_api_kwargs()</text>
+
+        <!-- ===== 转发目标模块 ===== -->
+        <rect x="600" y="55" width="540" height="310" rx="10" fill="rgba(8, 51, 68, 0.08)" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="870" y="78" fill="#22d3ee" font-size="11" font-weight="700" text-anchor="middle">转发目标模块（Parser/Thin Agent 模式）</text>
+        <line x1="620" y1="88" x2="1120" y2="88" stroke="#22d3ee" stroke-width="0.5"/>
+
+        <rect x="620" y="100" width="240" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="740" y="122" fill="white" font-size="9" font-weight="600" text-anchor="middle">agent/agent_init.py</text>
+        <text x="740" y="140" fill="#94a3b8" font-size="8" text-anchor="middle">init_agent() — 初始化所有属性</text>
+        <text x="740" y="152" fill="#94a3b8" font-size="7" text-anchor="middle">加载配置、tools、memory、skills</text>
+
+        <rect x="880" y="100" width="240" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="1000" y="122" fill="white" font-size="9" font-weight="600" text-anchor="middle">agent/system_prompt.py</text>
+        <text x="1000" y="140" fill="#94a3b8" font-size="8" text-anchor="middle">build_system_prompt()</text>
+        <text x="1000" y="152" fill="#94a3b8" font-size="7" text-anchor="middle">stable + context + volatile 三层</text>
+
+        <rect x="620" y="175" width="240" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="740" y="197" fill="white" font-size="9" font-weight="600" text-anchor="middle">agent/conversation_loop.py</text>
+        <text x="740" y="215" fill="#94a3b8" font-size="8" text-anchor="middle">run_conversation() — 对话主循环</text>
+        <text x="740" y="227" fill="#94a3b8" font-size="7" text-anchor="middle">prompt构建 → LLM → tool → loop</text>
+
+        <rect x="880" y="175" width="240" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="1000" y="197" fill="white" font-size="9" font-weight="600" text-anchor="middle">agent/prompt_builder.py</text>
+        <text x="1000" y="215" fill="#94a3b8" font-size="8" text-anchor="middle">MEMORY_GUIDANCE / SKILLS_GUIDANCE</text>
+        <text x="1000" y="227" fill="#94a3b8" font-size="7" text-anchor="middle">默认身份 / 工具提示词常量</text>
+
+        <rect x="620" y="250" width="240" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="740" y="272" fill="white" font-size="9" font-weight="600" text-anchor="middle">agent/context_compressor.py</text>
+        <text x="740" y="290" fill="#94a3b8" font-size="8" text-anchor="middle">_compress_context() 的实现</text>
+        <text x="740" y="302" fill="#94a3b8" font-size="7" text-anchor="middle">上下文压缩 / token 预算管理</text>
+
+        <rect x="880" y="250" width="240" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="1000" y="272" fill="white" font-size="9" font-weight="600" text-anchor="middle">agent/memory_manager.py</text>
+        <text x="1000" y="290" fill="#94a3b8" font-size="8" text-anchor="middle">MemoryStore</text>
+        <text x="1000" y="302" fill="#94a3b8" font-size="7" text-anchor="middle">持久化记忆 / 用户画像</text>
+
+        <!-- 箭头：AIAgent → 转发目标 -->
+        <line x1="510" y1="130" x2="618" y2="130" stroke="#22d3ee" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-cyan)"/>
+        <line x1="510" y1="205" x2="618" y2="205" stroke="#22d3ee" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-cyan)"/>
+        <line x1="510" y1="280" x2="618" y2="280" stroke="#22d3ee" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-cyan)"/>
+
+        <!-- ===== 关联工具层 ===== -->
+        <rect x="600" y="390" width="540" height="240" rx="10" fill="rgba(120, 53, 15, 0.06)" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="870" y="413" fill="#fbbf24" font-size="11" font-weight="700" text-anchor="middle">工具调度系统（tools/）</text>
+        <line x1="620" y1="423" x2="1120" y2="423" stroke="#fbbf24" stroke-width="0.5"/>
+
+        <rect x="620" y="435" width="170" height="50" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="705" y="458" fill="white" font-size="9" font-weight="600" text-anchor="middle">model_tools.py</text>
+        <text x="705" y="473" fill="#94a3b8" font-size="7" text-anchor="middle">get_tool_definitions()</text>
+        <text x="705" y="483" fill="#94a3b8" font-size="7" text-anchor="middle">handle_function_call()</text>
+
+        <rect x="810" y="435" width="170" height="50" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="895" y="458" fill="white" font-size="9" font-weight="600" text-anchor="middle">toolsets.py</text>
+        <text x="895" y="473" fill="#94a3b8" font-size="7" text-anchor="middle">Toolset Registry</text>
+        <text x="895" y="483" fill="#94a3b8" font-size="7" text-anchor="middle">Compose / Resolve</text>
+
+        <rect x="1000" y="435" width="120" height="50" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="1060" y="458" fill="white" font-size="9" font-weight="600" text-anchor="middle">tools/*.py</text>
+        <text x="1060" y="473" fill="#94a3b8" font-size="7" text-anchor="middle">单个工具</text>
+        <text x="1060" y="483" fill="#94a3b8" font-size="7" text-anchor="middle">实现文件</text>
+
+        <text x="640" y="515" fill="#94a3b8" font-size="8">_execute_tool_calls()</text>
+        <text x="640" y="535" fill="#94a3b8" font-size="8">  ├─ _invoke_tool() → handle_function_call() → tools/xxx</text>
+        <text x="640" y="555" fill="#94a3b8" font-size="8">  ├─ _dispatch_delegate_task() → delegate_task tool</text>
+        <text x="640" y="575" fill="#94a3b8" font-size="8">  └─ 并发/串行两种执行模式</text>
+
+        <!-- ===== 例外 ===== -->
+        <rect x="600" y="655" width="540" height="110" rx="10" fill="rgba(136, 19, 55, 0.05)" stroke="#fb7185" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="870" y="678" fill="#fb7185" font-size="11" font-weight="700" text-anchor="middle">例外处理 / 降级</text>
+        <line x1="620" y1="688" x2="1120" y2="688" stroke="#fb7185" stroke-width="0.5"/>
+
+        <text x="640" y="710" fill="#94a3b8" font-size="8">_try_activate_fallback() — 主模型失败时切备用模型</text>
+        <text x="640" y="730" fill="#94a3b8" font-size="8">_handle_max_iterations() — 超过 90 轮 tool call 时终止</text>
+        <text x="640" y="750" fill="#94a3b8" font-size="8">_StreamErrorEvent — 流式传输异常信号</text>
+
+        <!-- Legend -->
+        <rect x="60" y="850" width="500" height="40" rx="6" fill="rgba(15, 23, 42, 0.6)" stroke="#1e293b" stroke-width="1"/>
+        <rect x="72" y="860" width="16" height="10" rx="2" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="94" y="869" fill="#94a3b8" font-size="8">AIAgent 主类</text>
+        <rect x="200" y="860" width="16" height="10" rx="2" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="222" y="869" fill="#94a3b8" font-size="8">转发目标模块</text>
+        <rect x="350" y="860" width="16" height="10" rx="2" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="372" y="869" fill="#94a3b8" font-size="8">工具层</text>
+      </svg>
+    </div>
+    <p class="footer">Class Diagram · AIAgent · run_agent.py</p>
+  </div>
+</body>
+</html>

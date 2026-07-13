@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIAgent Flowchart</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020617;
+      min-height: 100vh;
+      padding: 2rem;
+      color: white;
+    }
+    .container { max-width: 1300px; margin: 0 auto; }
+    .header { margin-bottom: 2rem; }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .pulse-dot { width: 12px; height: 12px; background: #34d399; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
+    .diagram-container {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 1rem;
+      border: 1px solid #1e293b;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+    svg { width: 100%; min-width: 600px; display: block; }
+    .footer { text-align: center; margin-top: 1.5rem; color: #475569; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>AIAgent — 对话循环流程图</h1>
+      </div>
+      <p class="subtitle">Tool-Calling Loop · run_conversation()</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 700 1020">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arr-down" markerWidth="8" markerHeight="6" refX="4" refY="6" orient="auto">
+            <polygon points="0,0 8,0 4,6" fill="#64748b"/>
+          </marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- 1. 开始 -->
+        <rect x="220" y="20" width="260" height="40" rx="20" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="2"/>
+        <text x="350" y="45" fill="white" font-size="11" font-weight="700" text-anchor="middle">开始: run_conversation()</text>
+        <line x1="350" y1="60" x2="350" y2="85" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+
+        <!-- 2. 构建/恢复 system prompt -->
+        <rect x="200" y="88" width="300" height="50" rx="8" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="2"/>
+        <text x="350" y="110" fill="white" font-size="10" font-weight="600" text-anchor="middle">构建/恢复 System Prompt</text>
+        <text x="350" y="128" fill="#94a3b8" font-size="8" text-anchor="middle">缓存命中 → 重用；否则三层组装</text>
+        <line x1="350" y1="138" x2="350" y2="163" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+
+        <!-- 3. 组装 API 消息 -->
+        <rect x="200" y="166" width="300" height="40" rx="8" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="2"/>
+        <text x="350" y="183" fill="white" font-size="10" font-weight="600" text-anchor="middle">组装 API 消息</text>
+        <text x="350" y="197" fill="#94a3b8" font-size="8" text-anchor="middle">system + user + history + tool defs</text>
+        <line x1="350" y1="206" x2="350" y2="231" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+
+        <!-- 4. 调用 LLM -->
+        <rect x="220" y="234" width="260" height="40" rx="8" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="2"/>
+        <text x="350" y="256" fill="white" font-size="11" font-weight="700" text-anchor="middle">调用 LLM (流式/非流式)</text>
+        <line x1="350" y1="274" x2="350" y2="299" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+
+        <!-- 5. 判断: 流式错误? -->
+        <polygon points="350,302 520,340 350,378 180,340" fill="rgba(76, 29, 149, 0.25)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="350" y="343" fill="white" font-size="9" font-weight="600" text-anchor="middle">流式错误?</text>
+        <line x1="350" y1="378" x2="350" y2="403" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+
+        <!-- 6. 降级? -->
+        <polygon points="350,406 520,444 350,482 180,444" fill="rgba(76, 29, 149, 0.25)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="350" y="447" fill="white" font-size="9" font-weight="600" text-anchor="middle">降级/重试?</text>
+
+        <!-- 是 → 降级 -->
+        <path d="M 180 444 L 80 444 L 80 256 L 218 256" fill="none" stroke="#fb7185" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-down)"/>
+        <text x="85" y="340" fill="#fb7185" font-size="8">是 → 降级模型</text>
+
+        <!-- 否 → 继续 -->
+        <line x1="350" y1="482" x2="350" y2="507" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+
+        <!-- 7. 判断: 有 tool_calls? -->
+        <polygon points="350,510 520,548 350,586 180,548" fill="rgba(76, 29, 149, 0.3)" stroke="#a78bfa" stroke-width="2"/>
+        <text x="350" y="543" fill="white" font-size="10" font-weight="700" text-anchor="middle">有 tool_calls?</text>
+
+        <!-- 否 → 返回文本 -->
+        <path d="M 180 548 L 50 548 L 50 640 L 220 640" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-down)"/>
+        <text x="55" y="590" fill="#22d3ee" font-size="8">否 → 返回文本回复</text>
+        <rect x="60" y="643" width="160" height="35" rx="8" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="2"/>
+        <text x="140" y="660" fill="white" font-size="9" font-weight="600" text-anchor="middle">返回 final_response</text>
+        <text x="140" y="672" fill="#94a3b8" font-size="7" text-anchor="middle">给 Gateway/CLI</text>
+
+        <!-- 是 → 执行工具 -->
+        <line x1="350" y1="586" x2="350" y2="611" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+
+        <!-- 8. 执行 tool_calls -->
+        <rect x="200" y="614" width="300" height="50" rx="8" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="2"/>
+        <text x="350" y="636" fill="white" font-size="10" font-weight="600" text-anchor="middle">_execute_tool_calls()</text>
+        <text x="350" y="653" fill="#94a3b8" font-size="8" text-anchor="middle">并发执行所有 tool_calls</text>
+        <line x1="350" y1="664" x2="350" y2="689" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+
+        <!-- 9. 追加工具结果 -->
+        <rect x="200" y="692" width="300" height="40" rx="8" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="2"/>
+        <text x="350" y="709" fill="white" font-size="10" font-weight="600" text-anchor="middle">追加 tool result 到消息</text>
+        <text x="350" y="723" fill="#94a3b8" font-size="8" text-anchor="middle">api_call_count++</text>
+        <line x1="350" y1="732" x2="350" y2="757" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+
+        <!-- 10. 超限? -->
+        <polygon points="350,760 520,798 350,836 180,798" fill="rgba(136, 19, 55, 0.25)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="350" y="793" fill="white" font-size="9" font-weight="600" text-anchor="middle">api_call_count &gt;= max_iterations?</text>
+
+        <!-- 是 → 截断返回 -->
+        <path d="M 180 798 L 50 798 L 50 870" fill="none" stroke="#fb7185" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-down)"/>
+        <text x="55" y="840" fill="#fb7185" font-size="8">是 → 截断回复</text>
+        <rect x="60" y="873" width="160" height="35" rx="8" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="2"/>
+        <text x="140" y="890" fill="white" font-size="9" font-weight="600" text-anchor="middle">截断回复 + 警告</text>
+        <text x="140" y="902" fill="#94a3b8" font-size="7" text-anchor="middle">max_iterations reached</text>
+
+        <!-- 否 → 回到 LLM 调用 -->
+        <line x1="350" y1="836" x2="350" y2="861" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-down)"/>
+        <text x="355" y="875" fill="#fbbf24" font-size="8">否</text>
+        <path d="M 350 861 L 350 256" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-down)"/>
+        <rect x="370" y="540" width="130" height="30" rx="6" fill="rgba(120, 53, 15, 0.2)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="435" y="555" fill="#fbbf24" font-size="8" text-anchor="middle">循环回到 @7</text>
+        <text x="435" y="565" fill="#94a3b8" font-size="7" text-anchor="middle">带上 tool result</text>
+
+        <!-- 循环标记 -->
+        <text x="570" y="450" fill="#fbbf24" font-size="20" font-weight="700">⟳</text>
+        <text x="540" y="470" fill="#fbbf24" font-size="8">tool-calling loop</text>
+      </svg>
+    </div>
+    <p class="footer">Flowchart · Tool-Calling Loop · max_iterations=90</p>
+  </div>
+</body>
+</html>
