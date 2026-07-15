@@ -1,0 +1,1 @@
+profiles/*/.env filter=git-crypt diff=git-crypt

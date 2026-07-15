@@ -8,4 +8,5 @@ Thumbs.db
 *~
 
 # Secrets — actual .env files are never tracked
-profiles/*/.env
+# update: we can track .env files now, based on git-crypt
+#profiles/*/.env
