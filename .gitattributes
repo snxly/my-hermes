@@ -1,1 +1,2 @@
 profiles/*/.env filter=git-crypt diff=git-crypt
+profiles/*/config.yaml filter=git-crypt diff=git-crypt

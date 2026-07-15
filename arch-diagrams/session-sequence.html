@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes Session — Sequence Diagram</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020617;
+      min-height: 100vh;
+      padding: 2rem;
+      color: white;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { margin-bottom: 2rem; }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .pulse-dot { width: 12px; height: 12px; background: #22d3ee; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+    .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
+    .diagram-container {
+      background: rgba(15, 23, 42, 0.5); border-radius: 1rem;
+      border: 1px solid #1e293b; padding: 1.5rem; overflow-x: auto;
+    }
+    svg { width: 100%; min-width: 1150px; display: block; }
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem; margin-top: 2rem;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.5); border-radius: 0.75rem;
+      border: 1px solid #1e293b; padding: 1.25rem;
+    }
+    .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .card-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .card-dot.cyan { background: #22d3ee; }
+    .card-dot.emerald { background: #34d399; }
+    .card-dot.violet { background: #a78bfa; }
+    .card-dot.rose { background: #fb7185; }
+    .card-dot.orange { background: #fb923c; }
+    .card h3 { font-size: 0.875rem; font-weight: 600; }
+    .card p { color: #94a3b8; font-size: 0.75rem; line-height: 1.5; }
+    .footer { text-align: center; margin-top: 1.5rem; color: #475569; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>Hermes Session — Sequence Diagram</h1>
+      </div>
+      <p class="subtitle">一条消息从 Adapter 到 AIAgent 的完整链路：实例创建与传递</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1200 1050">
+        <defs>
+          <marker id="ah" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+          </marker>
+          <marker id="ah-em" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#34d399"/>
+          </marker>
+          <marker id="ah-v" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/>
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- =================================================================
+             LIFELINE HEADERS (top boxes)
+             ================================================================= -->
+
+        <!-- Lifeline columns (x positions) -->
+        <!-- Adapter: x=60, width=100 -->
+        <!-- SessionSource: x=200, width=40 (dashed, temp) -->
+        <!-- MessageEvent: x=280, width=40 (dashed, temp) -->
+        <!-- GatewayRunner: x=360, width=120 -->
+        <!-- SessionStore: x=520, width=110 -->
+        <!-- SessionDB: x=670, width=100 -->
+        <!-- SessionContext: x=810, width=40 (dashed, temp) -->
+        <!-- AIAgent: x=890, width=110 -->
+
+        <!-- Lifeline boxes -->
+        <rect x="60" y="30" width="130" height="36" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="125" y="52" fill="white" font-size="10" font-weight="600" text-anchor="middle">Adapter</text>
+
+        <rect x="240" y="30" width="100" height="36" rx="6" fill="rgba(8, 51, 68, 0.3)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="290" y="52" fill="#94a3b8" font-size="9" font-weight="500" text-anchor="middle">GatewayRunner</text>
+
+        <rect x="390" y="30" width="130" height="36" rx="6" fill="rgba(251, 146, 60, 0.2)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="455" y="52" fill="white" font-size="10" font-weight="600" text-anchor="middle">SessionStore</text>
+
+        <rect x="570" y="30" width="110" height="36" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="625" y="52" fill="white" font-size="10" font-weight="600" text-anchor="middle">SessionDB</text>
+
+        <rect x="730" y="30" width="110" height="36" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="785" y="52" fill="white" font-size="10" font-weight="600" text-anchor="middle">AIAgent</text>
+
+        <!-- Dashed lifelines (temp objects) -->
+        <rect x="20" y="30" width="36" height="16" rx="3" fill="rgba(8, 51, 68, 0.2)" stroke="#22d3ee" stroke-width="0.6"/>
+        <text x="38" y="41" fill="#94a3b8" font-size="6" text-anchor="middle">S</text>
+        <rect x="820" y="30" width="36" height="16" rx="3" fill="rgba(76, 29, 149, 0.2)" stroke="#a78bfa" stroke-width="0.6"/>
+        <text x="838" y="41" fill="#94a3b8" font-size="6" text-anchor="middle">C</text>
+
+        <!-- Lifelines (vertical dashed lines) -->
+        <line x1="125" y1="66" x2="125" y2="980" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="290" y1="66" x2="290" y2="980" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="455" y1="66" x2="455" y2="980" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="625" y1="66" x2="625" y2="980" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="785" y1="66" x2="785" y2="980" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="38" y1="46" x2="38" y2="980" stroke="#1e293b" stroke-width="0.6" stroke-dasharray="2,4"/>
+        <line x1="838" y1="46" x2="838" y2="980" stroke="#1e293b" stroke-width="0.6" stroke-dasharray="2,4"/>
+
+        <!-- =================================================================
+             Section labels (phases)
+             ================================================================= -->
+        <text x="5" y="95" fill="#64748b" font-size="8">Phase</text>
+        <text x="5" y="112" fill="#22d3ee" font-size="8">Ⅰ</text>
+        <line x1="0" y1="118" x2="910" y2="118" stroke="#1e293b" stroke-width="0.5" stroke-dasharray="8,4"/>
+        <text x="5" y="252" fill="#fb923c" font-size="8">Ⅱ</text>
+        <line x1="0" y1="258" x2="910" y2="258" stroke="#1e293b" stroke-width="0.5" stroke-dasharray="8,4"/>
+        <text x="5" y="432" fill="#fb923c" font-size="8">Ⅲ</text>
+        <line x1="0" y1="438" x2="910" y2="438" stroke="#1e293b" stroke-width="0.5" stroke-dasharray="8,4"/>
+        <text x="5" y="672" fill="#34d399" font-size="8">Ⅳ</text>
+        <line x1="0" y1="678" x2="910" y2="678" stroke="#1e293b" stroke-width="0.5" stroke-dasharray="8,4"/>
+        <text x="5" y="855" fill="#a78bfa" font-size="8">Ⅴ</text>
+        <line x1="0" y1="861" x2="910" y2="861" stroke="#1e293b" stroke-width="0.5" stroke-dasharray="8,4"/>
+
+        <!-- =================================================================
+             STEP 1: Adapter receives raw message
+             ================================================================= -->
+        <rect x="20" y="80" width="12" height="12" rx="3" fill="#22d3ee" opacity="0.8"/>
+        <text x="26" y="89" fill="white" font-size="7" text-anchor="middle">1</text>
+        <rect x="55" y="76" width="220" height="40" rx="4" fill="rgba(8, 51, 68, 0.3)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="165" y="92" fill="white" font-size="9" text-anchor="middle">收到原始消息 (WebSocket/HTTP)</text>
+        <text x="165" y="106" fill="#94a3b8" font-size="8" text-anchor="middle">解析 platform / chat_id / user_id 等字段</text>
+
+        <!-- =================================================================
+             STEP 2: Adapter creates SessionSource
+             ================================================================= -->
+        <rect x="20" y="130" width="12" height="12" rx="3" fill="#22d3ee" opacity="0.8"/>
+        <text x="26" y="139" fill="white" font-size="7" text-anchor="middle">2</text>
+        <rect x="55" y="126" width="220" height="34" rx="4" fill="rgba(8, 51, 68, 0.3)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="165" y="142" fill="white" font-size="9" text-anchor="middle">✚ new SessionSource(...)</text>
+        <text x="165" y="155" fill="#94a3b8" font-size="8" text-anchor="middle">platform=wecom, chat_id=XuLuYing, ...</text>
+        <text x="165" y="168" fill="#64748b" font-size="7" text-anchor="middle">← session.py:148</text>
+
+        <!-- create arrow: Adapter → SessionSource (self) -->
+        <line x1="125" y1="135" x2="50" y2="135" stroke="#22d3ee" stroke-width="1" marker-end="url(#ah)" opacity="0.6"/>
+        <text x="80" y="130" fill="#94a3b8" font-size="7">create</text>
+
+        <!-- =================================================================
+             STEP 3: Adapter wraps into MessageEvent
+             ================================================================= -->
+        <rect x="20" y="172" width="12" height="12" rx="3" fill="#22d3ee" opacity="0.8"/>
+        <text x="26" y="181" fill="white" font-size="7" text-anchor="middle">3</text>
+        <rect x="55" y="168" width="220" height="34" rx="4" fill="rgba(8, 51, 68, 0.3)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="165" y="184" fill="white" font-size="9" text-anchor="middle">✚ new MessageEvent(...)</text>
+        <text x="165" y="197" fill="#94a3b8" font-size="8" text-anchor="middle">text=..., source=SessionSource</text>
+        <text x="165" y="210" fill="#64748b" font-size="7" text-anchor="middle">← base.py:1739</text>
+
+        <!-- =================================================================
+             STEP 4: Adapter calls _message_handler(event)
+             ================================================================= -->
+        <rect x="20" y="214" width="12" height="12" rx="3" fill="#22d3ee" opacity="0.8"/>
+        <text x="26" y="223" fill="white" font-size="7" text-anchor="middle">4</text>
+
+        <!-- Arrow: Adapter → GatewayRunner -->
+        <line x1="125" y1="220" x2="288" y2="220" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#ah)"/>
+        <rect x="135" y="210" width="130" height="18" rx="3" fill="rgba(15, 23, 42, 0.8)" stroke="#22d3ee" stroke-width="0.8"/>
+        <text x="200" y="223" fill="#22d3ee" font-size="8" text-anchor="middle">_message_handler(event)</text>
+        <text x="200" y="236" fill="#64748b" font-size="7" text-anchor="middle">← base.py:2791</text>
+
+        <!-- =================================================================
+             STEP 5: _make_profile_handler() stamps profile
+             ================================================================= -->
+        <rect x="250" y="238" width="12" height="12" rx="3" fill="#34d399" opacity="0.8"/>
+        <text x="256" y="247" fill="white" font-size="7" text-anchor="middle">5</text>
+        <rect x="240" y="234" width="150" height="20" rx="3" fill="rgba(6, 78, 59, 0.25)" stroke="#34d399" stroke-width="0.8"/>
+        <text x="315" y="248" fill="#94a3b8" font-size="8" text-anchor="middle">[multi-profile] stamp source.profile</text>
+
+        <!-- =================================================================
+             STEP 6: _handle_message(event) — REAL ENTRY
+             ================================================================= -->
+        <rect x="250" y="270" width="12" height="12" rx="3" fill="#34d399" opacity="0.8"/>
+        <text x="256" y="279" fill="white" font-size="7" text-anchor="middle">6</text>
+        <rect x="240" y="266" width="150" height="30" rx="4" fill="rgba(6, 78, 59, 0.35)" stroke="#34d399" stroke-width="1.2"/>
+        <text x="315" y="281" fill="white" font-size="9" font-weight="600" text-anchor="middle">_handle_message(event)</text>
+        <text x="315" y="293" fill="#94a3b8" font-size="8" text-anchor="middle">source = event.source</text>
+        <text x="315" y="305" fill="#64748b" font-size="7" text-anchor="middle">← run.py:8935</text>
+
+        <!-- =================================================================
+             STEP 7: Authorization / command check
+             ================================================================= -->
+        <rect x="250" y="308" width="12" height="12" rx="3" fill="#64748b" opacity="0.6"/>
+        <text x="256" y="317" fill="white" font-size="7" text-anchor="middle">7</text>
+        <rect x="240" y="304" width="150" height="24" rx="3" fill="rgba(30, 41, 59, 0.5)" stroke="#64748b" stroke-width="0.6"/>
+        <text x="315" y="318" fill="#94a3b8" font-size="8" text-anchor="middle">权限检查 / 命令检测</text>
+        <text x="315" y="330" fill="#64748b" font-size="7" text-anchor="middle">/new → force_new | /stop → suspend</text>
+
+        <!-- =================================================================
+             STEP 8: reset_session_vars()
+             ================================================================= -->
+        <rect x="250" y="344" width="12" height="12" rx="3" fill="#64748b" opacity="0.6"/>
+        <text x="256" y="353" fill="white" font-size="7" text-anchor="middle">8</text>
+        <rect x="240" y="340" width="150" height="18" rx="3" fill="rgba(30, 41, 59, 0.5)" stroke="#64748b" stroke-width="0.6"/>
+        <text x="315" y="353" fill="#94a3b8" font-size="8" text-anchor="middle">reset_session_vars()</text>
+
+        <!-- =================================================================
+             PHASE II: SessionStore.get_or_create_session()
+             ================================================================= -->
+
+        <!-- === 9: GatewayRunner → SessionStore === -->
+        <rect x="250" y="380" width="12" height="12" rx="3" fill="#fb923c" opacity="0.8"/>
+        <text x="256" y="389" fill="white" font-size="7" text-anchor="middle">9</text>
+        <line x1="290" y1="388" x2="453" y2="388" stroke="#fb923c" stroke-width="1.5" marker-end="url(#ah)"/>
+        <rect x="310" y="378" width="130" height="18" rx="3" fill="rgba(15, 23, 42, 0.8)" stroke="#fb923c" stroke-width="0.8"/>
+        <text x="375" y="391" fill="#fb923c" font-size="8" text-anchor="middle">get_or_create_session(source)</text>
+        <text x="375" y="404" fill="#64748b" font-size="7" text-anchor="middle">调用: run.py:10884 / 定义: session.py:1775</text>
+
+        <!-- === 10: SessionStore → build_session_key === -->
+        <rect x="420" y="408" width="12" height="12" rx="3" fill="#fb923c" opacity="0.8"/>
+        <text x="426" y="417" fill="white" font-size="7" text-anchor="middle">10</text>
+        <rect x="390" y="404" width="130" height="25" rx="3" fill="rgba(251, 146, 60, 0.15)" stroke="#fb923c" stroke-width="0.8"/>
+        <text x="455" y="418" fill="white" font-size="8" text-anchor="middle">build_session_key(source) →</text>
+        <text x="455" y="428" fill="#94a3b8" font-size="7" text-anchor="middle">"agent:main:wecom:dm:XuLuYing"</text>
+        <text x="455" y="440" fill="#64748b" font-size="7" text-anchor="middle">← session.py:871</text>
+        <!-- self-arrow -->
+        <path d="M 455 404 L 500 404 Q 510 404 510 412 L 510 416 Q 510 425 500 425 L 457 425" fill="none" stroke="#fb923c" stroke-width="0.8" marker-end="url(#ah)" opacity="0.6"/>
+
+        <!-- === 11: Single-flight check === -->
+        <rect x="420" y="444" width="12" height="12" rx="3" fill="#fb7185" opacity="0.8"/>
+        <text x="426" y="453" fill="white" font-size="7" text-anchor="middle">11</text>
+        <rect x="390" y="440" width="130" height="22" rx="3" fill="rgba(136, 19, 55, 0.25)" stroke="#fb7185" stroke-width="0.8"/>
+        <text x="455" y="452" fill="white" font-size="8" text-anchor="middle">查 _inflight_sessions</text>
+        <text x="455" y="463" fill="#fb7185" font-size="7" text-anchor="middle">首次 → 创建 _SessionFlight</text>
+        <text x="455" y="475" fill="#64748b" font-size="7" text-anchor="middle">← session.py:962</text>
+
+        <!-- === 12: Lock read _entries === -->
+        <rect x="420" y="476" width="12" height="12" rx="3" fill="#fb923c" opacity="0.8"/>
+        <text x="426" y="485" fill="white" font-size="7" text-anchor="middle">12</text>
+        <rect x="390" y="472" width="130" height="22" rx="3" fill="rgba(251, 146, 60, 0.15)" stroke="#fb923c" stroke-width="0.8"/>
+        <text x="455" y="484" fill="white" font-size="8" text-anchor="middle">查 _entries[session_key]</text>
+        <text x="455" y="495" fill="#94a3b8" font-size="7" text-anchor="middle">→ 未找到 OR 找到但 stale</text>
+
+        <!-- === 13: SessionStore → SessionDB (recovery/create) === -->
+        <rect x="420" y="512" width="12" height="12" rx="3" fill="#a78bfa" opacity="0.8"/>
+        <text x="426" y="521" fill="white" font-size="7" text-anchor="middle">13</text>
+        <line x1="455" y1="520" x2="623" y2="520" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#ah-v)"/>
+        <rect x="470" y="510" width="140" height="18" rx="3" fill="rgba(15, 23, 42, 0.8)" stroke="#a78bfa" stroke-width="0.8"/>
+        <text x="540" y="523" fill="#a78bfa" font-size="8" text-anchor="middle">_query_recoverable_session()</text>
+
+        <!-- === 14: SessionDB returns or None === -->
+        <line x1="625" y1="540" x2="457" y2="540" stroke="#a78bfa" stroke-width="1" marker-end="url(#ah-v)" opacity="0.7"/>
+        <text x="540" y="535" fill="#94a3b8" font-size="7">✓ recovered | ✗ None</text>
+
+        <!-- === 15: Create new SessionEntry === -->
+        <rect x="420" y="560" width="12" height="12" rx="3" fill="#fb923c" opacity="0.8"/>
+        <text x="426" y="569" fill="white" font-size="7" text-anchor="middle">15</text>
+        <rect x="390" y="556" width="130" height="34" rx="4" fill="rgba(251, 146, 60, 0.25)" stroke="#fb923c" stroke-width="1.2"/>
+        <text x="455" y="570" fill="white" font-size="9" text-anchor="middle">✚ new SessionEntry(...)</text>
+        <text x="455" y="583" fill="#94a3b8" font-size="8" text-anchor="middle">session_id = "20260713_..."</text>
+        <text x="455" y="596" fill="#64748b" font-size="7" text-anchor="middle">← session.py:643</text>
+
+        <!-- === 16: Publish to _entries === -->
+        <rect x="420" y="600" width="12" height="12" rx="3" fill="#fb923c" opacity="0.8"/>
+        <text x="426" y="609" fill="white" font-size="7" text-anchor="middle">16</text>
+        <rect x="390" y="596" width="130" height="34" rx="3" fill="rgba(251, 146, 60, 0.15)" stroke="#fb923c" stroke-width="0.8"/>
+        <text x="455" y="610" fill="white" font-size="8" text-anchor="middle">_entries[session_key] = entry</text>
+        <text x="455" y="622" fill="#94a3b8" font-size="7" text-anchor="middle">【单飞行】唤醒等待者</text>
+
+        <!-- === 17: SessionStore → SessionDB create === -->
+        <rect x="420" y="644" width="12" height="12" rx="3" fill="#a78bfa" opacity="0.8"/>
+        <text x="426" y="653" fill="white" font-size="7" text-anchor="middle">17</text>
+        <line x1="455" y1="652" x2="623" y2="652" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#ah-v)"/>
+        <rect x="470" y="642" width="140" height="18" rx="3" fill="rgba(15, 23, 42, 0.8)" stroke="#a78bfa" stroke-width="0.8"/>
+        <text x="540" y="655" fill="#a78bfa" font-size="8" text-anchor="middle">create_session(id, source...)</text>
+        <text x="540" y="672" fill="#64748b" font-size="7" text-anchor="middle">← hermes_state.py:937</text>
+
+        <!-- === 18: SessionStore saves entries === -->
+        <rect x="420" y="674" width="12" height="12" rx="3" fill="#fb923c" opacity="0.8"/>
+        <text x="426" y="683" fill="white" font-size="7" text-anchor="middle">18</text>
+        <rect x="390" y="670" width="130" height="18" rx="3" fill="rgba(251, 146, 60, 0.15)" stroke="#fb923c" stroke-width="0.8"/>
+        <text x="455" y="683" fill="#94a3b8" font-size="8" text-anchor="middle">_save_entries() → SQLite</text>
+
+        <!-- === 19: Returns SessionEntry === -->
+        <line x1="455" y1="700" x2="292" y2="700" stroke="#fb923c" stroke-width="1.5" marker-end="url(#ah)"/>
+        <rect x="330" y="692" width="120" height="16" rx="3" fill="rgba(15, 23, 42, 0.8)" stroke="#fb923c" stroke-width="0.8"/>
+        <text x="390" y="704" fill="#fb923c" font-size="8" text-anchor="middle">return SessionEntry</text>
+
+        <!-- =================================================================
+             PHASE IV: Build SessionContext
+             ================================================================= -->
+
+        <!-- === 20: GatewayRunner builds SessionContext === -->
+        <rect x="250" y="730" width="12" height="12" rx="3" fill="#a78bfa" opacity="0.8"/>
+        <text x="256" y="739" fill="white" font-size="7" text-anchor="middle">20</text>
+        <line x1="290" y1="738" x2="836" y2="738" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#ah-v)"/>
+        <rect x="440" y="728" width="180" height="18" rx="3" fill="rgba(15, 23, 42, 0.8)" stroke="#a78bfa" stroke-width="0.8"/>
+        <text x="530" y="741" fill="#a78bfa" font-size="8" text-anchor="middle">✚ new SessionContext(source, entry, ...)</text>
+        <text x="530" y="754" fill="#64748b" font-size="7" text-anchor="middle">← run.py:11032 build_session_context()</text>
+
+        <!-- === 21: set_session_vars === -->
+        <rect x="250" y="758" width="12" height="12" rx="3" fill="#34d399" opacity="0.8"/>
+        <text x="256" y="767" fill="white" font-size="7" text-anchor="middle">21</text>
+        <rect x="240" y="754" width="150" height="18" rx="3" fill="rgba(6, 78, 59, 0.25)" stroke="#34d399" stroke-width="0.8"/>
+        <text x="315" y="767" fill="#94a3b8" font-size="8" text-anchor="middle">set_session_vars(ContextVars)</text>
+
+        <!-- === 22: _handle_message_with_agent === -->
+        <rect x="250" y="788" width="12" height="12" rx="3" fill="#34d399" opacity="0.8"/>
+        <text x="256" y="797" fill="white" font-size="7" text-anchor="middle">22</text>
+        <rect x="240" y="784" width="150" height="30" rx="4" fill="rgba(6, 78, 59, 0.35)" stroke="#34d399" stroke-width="1.2"/>
+        <text x="315" y="799" fill="white" font-size="9" font-weight="600" text-anchor="middle">_handle_message_with_agent(</text>
+        <text x="315" y="811" fill="#94a3b8" font-size="8" text-anchor="middle">event, source, session_key)</text>
+        <text x="315" y="823" fill="#64748b" font-size="7" text-anchor="middle">← run.py:10855</text>
+
+        <!-- =================================================================
+             PHASE V: AIAgent
+             ================================================================= -->
+
+        <!-- === 23: GatewayRunner → AIAgent === -->
+        <rect x="250" y="826" width="12" height="12" rx="3" fill="#34d399" opacity="0.8"/>
+        <text x="256" y="835" fill="white" font-size="7" text-anchor="middle">23</text>
+        <line x1="290" y1="834" x2="783" y2="834" stroke="#34d399" stroke-width="1.5" marker-end="url(#ah-em)"/>
+        <rect x="420" y="824" width="160" height="18" rx="3" fill="rgba(15, 23, 42, 0.8)" stroke="#34d399" stroke-width="0.8"/>
+        <text x="500" y="837" fill="#34d399" font-size="8" text-anchor="middle">AIAgent.run_conversation(messages)</text>
+        <text x="500" y="852" fill="#64748b" font-size="7" text-anchor="middle">new AIAgent: run.py:18472 / call: run.py:19093</text>
+
+        <!-- === 24: AIAgent reads SessionContext === -->
+        <rect x="750" y="852" width="12" height="12" rx="3" fill="#a78bfa" opacity="0.8"/>
+        <text x="756" y="861" fill="white" font-size="7" text-anchor="middle">24</text>
+        <rect x="730" y="848" width="110" height="36" rx="3" fill="rgba(76, 29, 149, 0.25)" stroke="#a78bfa" stroke-width="0.8"/>
+        <text x="785" y="862" fill="white" font-size="8" text-anchor="middle">读取 SessionContext</text>
+        <text x="785" y="876" fill="#94a3b8" font-size="7" text-anchor="middle">注入 system prompt</text>
+
+        <!-- === 25: AIAgent runs tool loop === -->
+        <rect x="750" y="896" width="12" height="12" rx="3" fill="#34d399" opacity="0.8"/>
+        <text x="756" y="905" fill="white" font-size="7" text-anchor="middle">25</text>
+        <rect x="730" y="892" width="110" height="24" rx="3" fill="rgba(6, 78, 59, 0.25)" stroke="#34d399" stroke-width="0.8"/>
+        <text x="785" y="904" fill="white" font-size="8" text-anchor="middle">Tool-Calling Loop</text>
+        <text x="785" y="916" fill="#94a3b8" font-size="7" text-anchor="middle">多次 API 调用</text>
+
+        <!-- === 26: AIAgent writes to SessionDB === -->
+        <rect x="750" y="928" width="12" height="12" rx="3" fill="#a78bfa" opacity="0.8"/>
+        <text x="756" y="937" fill="white" font-size="7" text-anchor="middle">26</text>
+        <line x1="785" y1="936" x2="625" y2="936" stroke="#a78bfa" stroke-width="0.8" marker-end="url(#ah-v)" opacity="0.6" stroke-dasharray="4,2"/>
+        <text x="705" y="931" fill="#94a3b8" font-size="7">保存消息</text>
+
+        <!-- === 27: GatewayRunner: update_session === -->
+        <rect x="250" y="952" width="12" height="12" rx="3" fill="#34d399" opacity="0.8"/>
+        <text x="256" y="961" fill="white" font-size="7" text-anchor="middle">27</text>
+        <line x1="290" y1="960" x2="453" y2="960" stroke="#fb923c" stroke-width="1.2" marker-end="url(#ah)" opacity="0.7"/>
+        <rect x="310" y="952" width="130" height="16" rx="3" fill="rgba(15, 23, 42, 0.8)" stroke="#fb923c" stroke-width="0.8"/>
+        <text x="375" y="964" fill="#fb923c" font-size="7" text-anchor="middle">update_session(token)</text>
+
+        <!-- =================================================================
+             INSTANCE LIFETIME ANNOTATIONS (right side)
+             ================================================================= -->
+        <rect x="920" y="30" width="250" height="990" rx="8" fill="rgba(15, 23, 42, 0.6)" stroke="#1e293b" stroke-width="1"/>
+
+        <text x="935" y="55" fill="white" font-size="10" font-weight="600">Instance 生命周期</text>
+
+        <!-- SessionSource -->
+        <text x="935" y="150" fill="#22d3ee" font-size="9" font-weight="600">SessionSource</text>
+        <rect x="935" y="158" width="12" height="70" rx="2" fill="rgba(8, 51, 68, 0.5)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="953" y="168" fill="#94a3b8" font-size="7">创建</text>
+        <text x="953" y="195" fill="#94a3b8" font-size="7">传递到 gateway</text>
+        <text x="953" y="220" fill="#fb7185" font-size="7">直到 reset 后丢弃</text>
+
+        <!-- MessageEvent -->
+        <text x="935" y="255" fill="#22d3ee" font-size="9" font-weight="600">MessageEvent</text>
+        <rect x="935" y="263" width="12" height="45" rx="2" fill="rgba(8, 51, 68, 0.5)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="953" y="273" fill="#94a3b8" font-size="7">创建</text>
+        <text x="953" y="293" fill="#94a3b8" font-size="7">处理完就丢弃</text>
+
+        <!-- SessionEntry -->
+        <text x="935" y="570" fill="#fb923c" font-size="9" font-weight="600">SessionEntry</text>
+        <rect x="935" y="578" width="12" height="350" rx="2" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1"/>
+        <text x="953" y="588" fill="#94a3b8" font-size="7">创建 (15)</text>
+        <text x="953" y="700" fill="#94a3b8" font-size="7">存在 _entries 中</text>
+        <text x="953" y="870" fill="#fb7185" font-size="7">直到 /new 或 reset 才替换</text>
+
+        <!-- SessionContext -->
+        <text x="935" y="745" fill="#a78bfa" font-size="9" font-weight="600">SessionContext</text>
+        <rect x="935" y="753" width="12" height="80" rx="2" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="953" y="763" fill="#94a3b8" font-size="7">创建 (20)</text>
+        <text x="953" y="810" fill="#94a3b8" font-size="7">Agent 读取后丢弃</text>
+
+        <!-- _SessionFlight -->
+        <text x="935" y="465" fill="#fb7185" font-size="9" font-weight="600">_SessionFlight</text>
+        <rect x="935" y="473" width="12" height="40" rx="2" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1"/>
+        <text x="953" y="483" fill="#94a3b8" font-size="7">临时创建 (11)</text>
+        <text x="953" y="503" fill="#94a3b8" font-size="7">唤醒后删除</text>
+
+        <!-- =================================================================
+             Legend
+             ================================================================= -->
+        <rect x="920" y="925" width="230" height="85" rx="6" fill="rgba(15, 23, 42, 0.5)" stroke="#1e293b" stroke-width="0.8"/>
+        <text x="935" y="943" fill="white" font-size="9" font-weight="600">Legend</text>
+
+        <line x1="935" y1="958" x2="960" y2="958" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="965" y="961" fill="#94a3b8" font-size="7">消息传递</text>
+
+        <line x1="935" y1="973" x2="960" y2="973" stroke="#64748b" width="1.5" stroke-dasharray="4,2"/>
+        <text x="965" y="976" fill="#94a3b8" font-size="7">数据查询/返回</text>
+
+        <path d="M 935 988 L 950 988 Q 960 988 960 996 L 960 998 Q 960 1005 950 1005 L 937 1005" fill="none" stroke="#fb923c" stroke-width="0.8" marker-end="url(#ah)" opacity="0.6"/>
+        <text x="965" y="999" fill="#94a3b8" font-size="7">调用自身</text>
+      </svg>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="cards">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot cyan"></div>
+          <h3>Phase Ⅰ — Adapter 层</h3>
+        </div>
+        <p>
+          <b>步 1-3</b>：Adapter 收到原始消息，<b>new SessionSource()</b> 提取来源信息，<b>new MessageEvent()</b> 包装起来。<br/>
+          &nbsp;&nbsp;→ SessionSource: <code>gateway/session.py:148</code><br/>
+          &nbsp;&nbsp;→ MessageEvent: <code>gateway/platforms/base.py:1739</code><br/>
+          <b>步 4</b>：调用注册好的 <b>_message_handler(event)</b> 进入 Gateway。<br/>
+          &nbsp;&nbsp;→ <code>gateway/platforms/base.py:2791</code> set_message_handler<br/>
+          &nbsp;&nbsp;→ <code>gateway/run.py:7139</code> 注册（单 profile）<br/>
+          <b>关键</b>：SessionSource 的生命周期从这里开始，一直传递到 SessionStore。
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot orange"></div>
+          <h3>Phase Ⅱ-Ⅲ — 路由</h3>
+        </div>
+        <p>
+          <b>步 9</b>：<b>get_or_create_session(source)</b> 是路由核心。<br/>
+          &nbsp;&nbsp;→ <code>gateway/run.py:10884</code> 调用位置<br/>
+          &nbsp;&nbsp;→ <code>gateway/session.py:1775</code> 定义<br/>
+          <b>步 10</b>：<b>build_session_key()</b> 算 key。<br/>
+          &nbsp;&nbsp;→ <code>gateway/session.py:871</code><br/>
+          <b>步 11</b>：<b>_SessionFlight</b> 单飞行保并发安全。<br/>
+          &nbsp;&nbsp;→ <code>gateway/session.py:962</code><br/>
+          <b>步 12-16</b>：查/创建 <b>SessionEntry</b>，写 <b>_entries</b> 字典。<br/>
+          &nbsp;&nbsp;→ <code>gateway/session.py:643</code> SessionEntry 定义<br/>
+          &nbsp;&nbsp;→ <code>gateway/session.py:998</code> _entries<br/>
+          <b>步 17</b>：写 <b>SessionDB</b>（SQLite）。<br/>
+          &nbsp;&nbsp;→ <code>hermes_state.py:937</code><br/>
+          <b>关键</b>：SessionEntry 长期存在 _entries 中，不会每次销毁。
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot emerald"></div>
+          <h3>Phase Ⅳ-Ⅴ — Agent</h3>
+        </div>
+        <p>
+          <b>步 20</b>：<b>new SessionContext(source, session_key, session_id)</b><br/>
+          &nbsp;&nbsp;→ <code>gateway/run.py:11032</code> build_session_context()<br/>
+          <b>步 21</b>：<b>set_session_vars()</b> → ContextVar（跨 async 传播）。<br/>
+          &nbsp;&nbsp;→ <code>gateway/run.py:11035</code><br/>
+          <b>步 22</b>：<b>_handle_message_with_agent(event, source, ...)</b><br/>
+          &nbsp;&nbsp;→ <code>gateway/run.py:10855</code><br/>
+          <b>步 23</b>：<b>AIAgent.run_conversation()</b> 读取 SessionContext，注入 system prompt。<br/>
+          &nbsp;&nbsp;→ <code>gateway/run.py:18472</code> new AIAgent / <code>run.py:19093</code> run_conversation<br/>
+          <b>步 27</b>：<b>update_session()</b> 更新 token 计数。生命周期结束。<br/>
+          &nbsp;&nbsp;→ <code>gateway/session.py:update_session</code>
+        </p>
+      </div>
+    </div>
+
+    <p class="footer">
+      Hermes Session Sequence Diagram • 一条消息从 Adapter 到 AIAgent 的完整链路
+    </p>
+  </div>
+</body>
+</html>
