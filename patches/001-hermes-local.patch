@@ -1,0 +1,41 @@
+From 9a307381990fa38d499df8317c6ce0b40a7e2a98 Mon Sep 17 00:00:00 2001
+From: Default <default@hermes>
+Date: Fri, 17 Jul 2026 15:21:20 +0800
+Subject: [PATCH] fix(feishu): remove table downgrade, Feishu now renders md
+ tables
+
+---
+ plugins/platforms/feishu/adapter.py | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/plugins/platforms/feishu/adapter.py b/plugins/platforms/feishu/adapter.py
+index 965286469..be1d7d540 100644
+--- a/plugins/platforms/feishu/adapter.py
++++ b/plugins/platforms/feishu/adapter.py
+@@ -155,9 +155,7 @@ _MARKDOWN_HINT_RE = re.compile(
+     r"(^#{1,6}\s)|(^\s*[-*]\s)|(^\s*\d+\.\s)|(^\s*---+\s*$)|(```)|(`[^`\n]+`)|(\*\*[^*\n].+?\*\*)|(~~[^~\n].+?~~)|(<u>.+?</u>)|(\*[^*\n]+\*)|(\[[^\]]+\]\([^)]+\))|(^>\s)",
+     re.MULTILINE,
+ )
+-# Detect markdown tables: a line starting with | followed by a separator line.
+-# Feishu post-type 'md' elements do not render tables, so we force text mode.
+-_MARKDOWN_TABLE_RE = re.compile(r"^\|.*\|\n\|[-|: ]+\|", re.MULTILINE)
++
+ _MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
+ _MARKDOWN_FENCE_OPEN_RE = re.compile(r"^```([^\n`]*)\s*$")
+ _MARKDOWN_FENCE_CLOSE_RE = re.compile(r"^```\s*$")
+@@ -4533,12 +4531,6 @@ class FeishuAdapter(BasePlatformAdapter):
+     # =========================================================================
+ 
+     def _build_outbound_payload(self, content: str) -> tuple[str, str]:
+-        # Feishu post-type 'md' elements do not render markdown tables; sending
+-        # table content as post causes the message to appear blank on the client.
+-        # Force plain text for anything that looks like a markdown table.
+-        if _MARKDOWN_TABLE_RE.search(content):
+-            text_payload = {"text": content}
+-            return "text", json.dumps(text_payload, ensure_ascii=False)
+         if _MARKDOWN_HINT_RE.search(content):
+             return "post", _build_markdown_post_payload(content)
+         text_payload = {"text": content}
+-- 
+2.43.0
+
