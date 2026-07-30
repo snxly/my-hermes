@@ -6,14 +6,14 @@
 | 端口 | 3306 |
 | 数据库 | lanyuan |
 | 用户名 | lanyuan |
-| 密码 | 123456 |
+| 密码 | 1111@Root |
 
 ## 命令行连接
 
 ```bash
 # 方式一：lanyuan 用户
 mysql -u lanyuan -p
-# 密码: 123456
+# 密码: 1111@Root
 
 # 方式二：root 免密
 sudo mysql
