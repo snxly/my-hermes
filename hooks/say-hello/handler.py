@@ -5,10 +5,27 @@ WebSocket connection (avoids conflicts with WeCom's ws-based transport).
 """
 
 import logging
+from pathlib import Path
+
+import yaml
 
 from hermes_cli.config import get_hermes_home
 
 logger = logging.getLogger("hooks.say-hello")
+
+
+def _profile_display_name(profile: str) -> str:
+    """Read profile_meta.display_name from the profile's config.yaml.
+
+    Falls back to the profile name when the field is missing or unreadable.
+    """
+    try:
+        cfg_path = Path(str(get_hermes_home())) / "config.yaml"
+        cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8"))
+        meta = (cfg or {}).get("profile_meta") or {}
+        return meta.get("display_name") or profile
+    except Exception:
+        return profile
 
 
 async def handle(event_type: str, context: dict) -> None:
@@ -26,7 +43,8 @@ async def handle(event_type: str, context: dict) -> None:
     else:
         profile = "default"
 
-    message = f"✨ {profile} 已上线，随时听候差遣～"
+    display = _profile_display_name(profile)
+    message = f"✨ {display} 已上线，随时听候差遣～"
 
     # Send to each platform's home channel using the gateway's own adapters
     for platform, adapter in gateway.adapters.items():
